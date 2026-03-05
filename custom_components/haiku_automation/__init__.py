@@ -46,6 +46,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data[DOMAIN][f"{entry.entry_id}_claude"] = claude_service
         _LOGGER.info("Claude Code Agent initialized")
     
+    # Initialize OpenAI Agent if API key is configured
+    if entry.data.get("openai_api_key") or entry.options.get("openai_api_key"):
+        from .openai_agent import OpenAIService
+        openai_config = {
+            "openai_api_key": entry.data.get("openai_api_key") or entry.options.get("openai_api_key"),
+            "openai_model": entry.data.get("openai_model") or entry.options.get("openai_model", "gpt-3.5-turbo"),
+            "openai_subscription": entry.data.get("openai_subscription") or entry.options.get("openai_subscription", "free")
+        }
+        openai_service = OpenAIService(hass, openai_config)
+        await openai_service.async_setup()
+        hass.data[DOMAIN][f"{entry.entry_id}_openai"] = openai_service
+        _LOGGER.info(f"OpenAI Agent initialized with model: {openai_config['openai_model']}")
+    
     return True
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

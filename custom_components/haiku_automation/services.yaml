@@ -29,3 +29,39 @@ process_telegram:
       example: "123456789"
       selector:
         text:
+
+openai_create_automation:
+  name: OpenAI Automatisierung erstellen
+  description: Erstellt eine Automatisierung mit OpenAI GPT aus natürlicher Sprache
+  fields:
+    request:
+      name: Anfrage
+      description: Beschreibung der gewünschten Automatisierung
+      required: true
+      example: "Schalte bei Sonnenuntergang alle Außenlichter ein"
+      selector:
+        text:
+          multiline: true
+    model:
+      name: GPT Modell
+      description: Das zu verwendende OpenAI Modell
+      required: false
+      default: "gpt-3.5-turbo"
+      example: "gpt-4"
+      selector:
+        select:
+          options:
+            - "gpt-4"
+            - "gpt-4-turbo"
+            - "gpt-3.5-turbo"
+    api_key:
+      name: API Key
+      description: OpenAI API Key (optional, falls nicht in Konfiguration)
+      required: false
+      selector:
+        text:
+          type: password
+
+openai_usage_stats:
+  name: OpenAI Nutzungsstatistiken
+  description: Zeigt die aktuellen OpenAI Nutzungsstatistiken und Limits

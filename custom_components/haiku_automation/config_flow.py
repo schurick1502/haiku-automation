@@ -35,6 +35,10 @@ class HAIKUConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             vol.Optional("enable_telegram", default=False): bool,
             vol.Optional("claude_api_key", default=""): str,
             vol.Optional("enable_claude", default=False): bool,
+            vol.Optional("openai_api_key", default=""): str,
+            vol.Optional("enable_openai", default=False): bool,
+            vol.Optional("openai_model", default="gpt-3.5-turbo"): vol.In(["gpt-4", "gpt-4-turbo", "gpt-3.5-turbo"]),
+            vol.Optional("openai_subscription", default="free"): vol.In(["free", "basic", "pro", "enterprise"]),
         })
 
         return self.async_show_form(
@@ -55,7 +59,7 @@ class HAIKUOptionsFlow(config_entries.OptionsFlow):
 
     def __init__(self, config_entry):
         """Initialize options flow."""
-        self.config_entry = config_entry
+        self._config_entry = config_entry
 
     async def async_step_init(self, user_input=None):
         """Manage the options."""
@@ -67,19 +71,35 @@ class HAIKUOptionsFlow(config_entries.OptionsFlow):
             data_schema=vol.Schema({
                 vol.Optional(
                     "enable_telegram",
-                    default=self.config_entry.options.get("enable_telegram", False)
+                    default=self._config_entry.options.get("enable_telegram", False)
                 ): bool,
                 vol.Optional(
                     "telegram_token",
-                    default=self.config_entry.options.get("telegram_token", "")
+                    default=self._config_entry.options.get("telegram_token", "")
                 ): str,
                 vol.Optional(
                     "telegram_chat_id", 
-                    default=self.config_entry.options.get("telegram_chat_id", "")
+                    default=self._config_entry.options.get("telegram_chat_id", "")
                 ): str,
                 vol.Optional(
+                    "enable_openai",
+                    default=self._config_entry.options.get("enable_openai", False)
+                ): bool,
+                vol.Optional(
+                    "openai_api_key",
+                    default=self._config_entry.options.get("openai_api_key", "")
+                ): str,
+                vol.Optional(
+                    "openai_model",
+                    default=self._config_entry.options.get("openai_model", "gpt-3.5-turbo")
+                ): vol.In(["gpt-4", "gpt-4-turbo", "gpt-3.5-turbo"]),
+                vol.Optional(
+                    "openai_subscription",
+                    default=self._config_entry.options.get("openai_subscription", "free")
+                ): vol.In(["free", "basic", "pro", "enterprise"]),
+                vol.Optional(
                     "natural_language_model",
-                    default=self.config_entry.options.get("natural_language_model", "simple")
-                ): vol.In(["simple", "advanced"]),
+                    default=self._config_entry.options.get("natural_language_model", "simple")
+                ): vol.In(["simple", "advanced", "openai", "claude"]),
             })
         )
