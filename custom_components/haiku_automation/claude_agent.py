@@ -7,6 +7,9 @@ import os
 from typing import Dict, Any, Optional
 from datetime import datetime
 
+# Import security components
+from .security import DataSanitizer, APIKeyVault, RateLimiter, SecurityAuditor
+
 _LOGGER = logging.getLogger(__name__)
 
 class ClaudeCodeAgent:
@@ -15,8 +18,20 @@ class ClaudeCodeAgent:
     def __init__(self, hass, api_key: str = None):
         """Initialize the Claude Code Agent."""
         self.hass = hass
-        self.api_key = api_key or os.getenv("ANTHROPIC_API_KEY")
         self.session = None
+        
+        # Initialize security components
+        self.sanitizer = DataSanitizer(hass)
+        self.vault = APIKeyVault(hass)
+        self.rate_limiter = RateLimiter()
+        self.auditor = SecurityAuditor(hass)
+        
+        # Store API key securely
+        if api_key:
+            self.vault.store_api_key("claude", api_key)
+        elif os.getenv("ANTHROPIC_API_KEY"):
+            self.vault.store_api_key("claude", os.getenv("ANTHROPIC_API_KEY"))
+        
         self.capabilities = {
             "file_operations": True,
             "yaml_editing": True,
@@ -47,21 +62,65 @@ class ClaudeCodeAgent:
         Returns:
             Dict with response and actions taken
         """
+        # Check rate limiting
+        if not self.rate_limiter.check_rate_limit("claude", "default"):
+            return {
+                "error": "Rate limit exceeded",
+                "message": "Please wait before making another request"
+            }
+        
         # Analyze request type
         request_type = self._analyze_request_type(request)
         
         # Prepare system context
         system_context = await self._prepare_system_context()
         
-        # Build prompt for Claude
-        prompt = self._build_prompt(request, request_type, system_context, context)
+        # Sanitize all data before sending to LLM
+        sanitized_data = {
+            "request": request,
+            "context": context or {},
+            "system_context": system_context
+        }
+        sanitized_data = self.sanitizer.sanitize_for_llm(sanitized_data)
+        
+        # Log the sanitized request
+        self.auditor.log_llm_request("claude", sanitized_data, sanitized=True)
+        
+        # Build prompt for Claude with sanitized data
+        prompt = self._build_prompt(
+            sanitized_data["request"], 
+            request_type, 
+            sanitized_data["system_context"], 
+            sanitized_data.get("context")
+        )
         
         # Execute with Claude Code
         result = await self._execute_claude_request(prompt, request_type)
         
-        # Apply changes if needed
+        # Restore original entity IDs from pseudonyms
+        if result.get("explanation"):
+            result["explanation"] = self.sanitizer.restore_from_llm(result["explanation"])
+        
+        if result.get("code"):
+            result["code"] = self.sanitizer.restore_from_llm(result["code"])
+        
         if result.get("actions"):
+            # Restore entity IDs in actions
+            actions_str = json.dumps(result["actions"])
+            restored_str = self.sanitizer.restore_from_llm(actions_str)
+            result["actions"] = json.loads(restored_str)
+            
+            # Apply changes if needed
             await self._apply_actions(result["actions"])
+        
+        # Log automation creation for auditing
+        if result.get("actions"):
+            for action in result["actions"]:
+                if action.get("type") == "create_automation":
+                    self.auditor.log_automation_created(
+                        action.get("content", {}).get("id", "unknown"),
+                        "claude_agent"
+                    )
         
         return result
     

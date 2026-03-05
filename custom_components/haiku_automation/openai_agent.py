@@ -7,6 +7,9 @@ from typing import Dict, Any, Optional, List
 from datetime import datetime
 import asyncio
 
+# Import security components
+from .security import DataSanitizer, APIKeyVault, RateLimiter, SecurityAuditor
+
 _LOGGER = logging.getLogger(__name__)
 
 class OpenAIAgent:
@@ -44,10 +47,19 @@ class OpenAIAgent:
             subscription_tier: free, basic, pro, enterprise
         """
         self.hass = hass
-        self.api_key = api_key
         self.model = model
         self.subscription_tier = subscription_tier
         self.session = None
+        
+        # Initialize security components
+        self.sanitizer = DataSanitizer(hass)
+        self.vault = APIKeyVault(hass)
+        self.rate_limiter = RateLimiter()
+        self.auditor = SecurityAuditor(hass)
+        
+        # Store API key securely
+        self.vault.store_api_key("openai", api_key)
+        
         self.usage_stats = {
             "total_tokens": 0,
             "total_cost": 0.0,
@@ -97,6 +109,7 @@ class OpenAIAgent:
         Returns:
             Dict with automation and explanation
         """
+        # Check rate limits (both internal and service-level)
         if not self.check_rate_limit():
             return {
                 "error": "Rate limit exceeded",
@@ -104,9 +117,28 @@ class OpenAIAgent:
                 "upgrade_url": "https://openai.com/pricing"
             }
         
-        # Prepare the prompt
+        if not self.rate_limiter.check_rate_limit("openai", self.subscription_tier):
+            return {
+                "error": "Service rate limit exceeded",
+                "message": "Please wait before making another request"
+            }
+        
+        # Sanitize request and context for privacy
+        sanitized_data = {
+            "request": request,
+            "context": context or {}
+        }
+        sanitized_data = self.sanitizer.sanitize_for_llm(sanitized_data)
+        
+        # Log the sanitized request
+        self.auditor.log_llm_request("openai", sanitized_data, sanitized=True)
+        
+        # Prepare the prompt with sanitized data
         system_prompt = self._build_system_prompt()
-        user_prompt = self._build_user_prompt(request, context)
+        user_prompt = self._build_user_prompt(
+            sanitized_data["request"], 
+            sanitized_data.get("context")
+        )
         
         try:
             # Call OpenAI API
@@ -118,10 +150,19 @@ class OpenAIAgent:
             # Parse response
             result = self._parse_gpt_response(response)
             
-            # Create automation if valid
+            # Restore original entity IDs from pseudonyms
             if result.get("automation"):
+                automation_str = json.dumps(result["automation"])
+                restored_str = self.sanitizer.restore_from_llm(automation_str)
+                result["automation"] = json.loads(restored_str)
+                
+                # Create automation with restored data
                 automation = await self._create_automation(result["automation"], request)
                 result["automation"] = automation
+            
+            # Restore any entity references in explanation
+            if result.get("explanation"):
+                result["explanation"] = self.sanitizer.restore_from_llm(result["explanation"])
             
             return result
             
@@ -188,11 +229,16 @@ ACTIONS:
         if not self.session:
             await self.initialize()
         
+        # Retrieve API key from secure vault
+        api_key = self.vault.retrieve_api_key("openai")
+        if not api_key:
+            raise Exception("OpenAI API key not found in vault")
+        
         limits = self.rate_limits.get(self.subscription_tier, self.rate_limits["free"])
         max_tokens = min(limits["max_tokens"], self.MODELS[self.model]["max_tokens"])
         
         headers = {
-            "Authorization": f"Bearer {self.api_key}",
+            "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json"
         }
         
