@@ -28,11 +28,46 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up HAIKU Automation from a config entry."""
-    _LOGGER.info("Setting up HAIKU Automation Builder")
+    _LOGGER.info("Setting up HAIKU Automation Builder v1.3.0 with Advanced Features")
     
     # Store instance
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = HAIKUAutomation(hass, entry)
+    
+    # Initialize new advanced features
+    from .knx_integration import KNXIntegration
+    from .ai_features import AutomationDebugger, SmartLearning, AutomationSuggester, PerformanceOptimizer
+    from .analytics import AutomationAnalytics
+    from .integration_hub import IntegrationHub
+    
+    # Setup KNX Integration
+    knx = KNXIntegration(hass)
+    hass.data[DOMAIN][f"{entry.entry_id}_knx"] = knx
+    await knx.discover_knx_devices()
+    _LOGGER.info("KNX Integration initialized")
+    
+    # Setup AI Features
+    debugger = AutomationDebugger(hass)
+    learning = SmartLearning(hass)
+    suggester = AutomationSuggester(hass)
+    optimizer = PerformanceOptimizer(hass)
+    
+    hass.data[DOMAIN][f"{entry.entry_id}_debugger"] = debugger
+    hass.data[DOMAIN][f"{entry.entry_id}_learning"] = learning
+    hass.data[DOMAIN][f"{entry.entry_id}_suggester"] = suggester
+    hass.data[DOMAIN][f"{entry.entry_id}_optimizer"] = optimizer
+    _LOGGER.info("AI Features initialized")
+    
+    # Setup Analytics
+    analytics = AutomationAnalytics(hass)
+    hass.data[DOMAIN][f"{entry.entry_id}_analytics"] = analytics
+    _LOGGER.info("Analytics Dashboard initialized")
+    
+    # Setup Integration Hub
+    hub = IntegrationHub(hass)
+    hass.data[DOMAIN][f"{entry.entry_id}_hub"] = hub
+    discovered = await hub.discover_integrations()
+    _LOGGER.info(f"Integration Hub initialized - Found {len(discovered['integrations'])} integrations")
     
     # Register services
     await _register_services(hass)
@@ -76,6 +111,55 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def _register_services(hass: HomeAssistant) -> None:
     """Register HAIKU services."""
     
+    async def debug_automation(call: ServiceCall) -> None:
+        """Debug an automation."""
+        automation_id = call.data.get("automation_id", "")
+        issue = call.data.get("issue", "")
+        
+        for key, instance in hass.data[DOMAIN].items():
+            if key.endswith("_debugger"):
+                result = await instance.debug_automation(automation_id, issue)
+                hass.bus.async_fire(
+                    f"{DOMAIN}_debug_result",
+                    {"result": result}
+                )
+                break
+    
+    async def suggest_automations(call: ServiceCall) -> None:
+        """Suggest automations based on patterns."""
+        for key, instance in hass.data[DOMAIN].items():
+            if key.endswith("_suggester"):
+                suggestions = await instance.suggest_automations()
+                hass.bus.async_fire(
+                    f"{DOMAIN}_suggestions",
+                    {"suggestions": suggestions}
+                )
+                break
+    
+    async def analytics_report(call: ServiceCall) -> None:
+        """Generate analytics report."""
+        period = call.data.get("period", "week")
+        
+        for key, instance in hass.data[DOMAIN].items():
+            if key.endswith("_analytics"):
+                report = await instance.generate_report(period)
+                hass.bus.async_fire(
+                    f"{DOMAIN}_analytics_report",
+                    {"report": report}
+                )
+                break
+    
+    async def discover_integrations(call: ServiceCall) -> None:
+        """Discover available integrations."""
+        for key, instance in hass.data[DOMAIN].items():
+            if key.endswith("_hub"):
+                discovered = await instance.discover_integrations()
+                hass.bus.async_fire(
+                    f"{DOMAIN}_integrations_discovered",
+                    {"integrations": discovered}
+                )
+                break
+    
     async def create_automation(call: ServiceCall) -> None:
         """Create automation from natural language."""
         request = call.data.get("request", "")
@@ -99,7 +183,45 @@ async def _register_services(hass: HomeAssistant) -> None:
                 result = await instance.process_telegram_message(message, chat_id)
                 break
     
-    # Register services
+    # Register new advanced services
+    if not hass.services.has_service(DOMAIN, "debug_automation"):
+        hass.services.async_register(
+            DOMAIN,
+            "debug_automation",
+            debug_automation,
+            schema=vol.Schema({
+                vol.Required("automation_id"): cv.string,
+                vol.Optional("issue"): cv.string,
+            })
+        )
+    
+    if not hass.services.has_service(DOMAIN, "suggest_automations"):
+        hass.services.async_register(
+            DOMAIN,
+            "suggest_automations",
+            suggest_automations,
+            schema=vol.Schema({})
+        )
+    
+    if not hass.services.has_service(DOMAIN, "analytics_report"):
+        hass.services.async_register(
+            DOMAIN,
+            "analytics_report",
+            analytics_report,
+            schema=vol.Schema({
+                vol.Optional("period", default="week"): vol.In(["day", "week", "month"])
+            })
+        )
+    
+    if not hass.services.has_service(DOMAIN, "discover_integrations"):
+        hass.services.async_register(
+            DOMAIN,
+            "discover_integrations",
+            discover_integrations,
+            schema=vol.Schema({})
+        )
+    
+    # Register existing services
     if not hass.services.has_service(DOMAIN, "create_automation"):
         hass.services.async_register(
             DOMAIN,
