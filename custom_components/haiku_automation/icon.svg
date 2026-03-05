@@ -1,0 +1,47 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="128" cy="128" r="120" fill="url(#gradient)" stroke="#fff" stroke-width="8"/>
+  
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667EEA;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764BA2;stop-opacity:1" />
+    </linearGradient>
+    
+    <filter id="shadow">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Japanese Character 俳 (HAI from HAIKU) -->
+  <text x="128" y="110" font-family="Arial, sans-serif" font-size="72" font-weight="bold" 
+        text-anchor="middle" fill="white" filter="url(#shadow)">俳</text>
+  
+  <!-- AI Brain Circuit Pattern -->
+  <g stroke="white" stroke-width="2" fill="none" opacity="0.8">
+    <!-- Left circuit -->
+    <path d="M 60 140 L 80 140 L 80 160 L 100 160" stroke-linecap="round"/>
+    <circle cx="100" cy="160" r="3" fill="white"/>
+    
+    <!-- Right circuit -->
+    <path d="M 196 140 L 176 140 L 176 160 L 156 160" stroke-linecap="round"/>
+    <circle cx="156" cy="160" r="3" fill="white"/>
+    
+    <!-- Bottom circuit -->
+    <path d="M 128 180 L 128 200" stroke-linecap="round"/>
+    <circle cx="128" cy="200" r="4" fill="white"/>
+  </g>
+  
+  <!-- Home Assistant House Icon (simplified) at bottom -->
+  <g transform="translate(128, 195)" fill="white" opacity="0.9">
+    <path d="M -15 10 L -15 0 L 0 -12 L 15 0 L 15 10 L 5 10 L 5 0 L -5 0 L -5 10 Z" 
+          transform="scale(0.8)"/>
+  </g>
+  
+  <!-- Decorative dots -->
+  <circle cx="50" cy="50" r="3" fill="white" opacity="0.5"/>
+  <circle cx="206" cy="50" r="3" fill="white" opacity="0.5"/>
+  <circle cx="50" cy="206" r="3" fill="white" opacity="0.5"/>
+  <circle cx="206" cy="206" r="3" fill="white" opacity="0.5"/>
+</svg>

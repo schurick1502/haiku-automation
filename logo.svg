@@ -1,0 +1,91 @@
+<svg width="512" height="256" viewBox="0 0 512 256" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with gradient -->
+  <rect width="512" height="256" rx="20" fill="url(#mainGradient)"/>
+  
+  <!-- Definitions -->
+  <defs>
+    <!-- Main gradient -->
+    <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667EEA;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#9F7AEA;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764BA2;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Glow effect -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Text shadow -->
+    <filter id="textShadow">
+      <feDropShadow dx="2" dy="2" stdDeviation="2" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Circuit pattern background -->
+  <g stroke="white" stroke-width="1" fill="none" opacity="0.1">
+    <path d="M 20 60 L 60 60 L 60 100 L 100 100"/>
+    <path d="M 20 196 L 60 196 L 60 156 L 100 156"/>
+    <path d="M 492 60 L 452 60 L 452 100 L 412 100"/>
+    <path d="M 492 196 L 452 196 L 452 156 L 412 156"/>
+    <circle cx="100" cy="100" r="2" fill="white"/>
+    <circle cx="100" cy="156" r="2" fill="white"/>
+    <circle cx="412" cy="100" r="2" fill="white"/>
+    <circle cx="412" cy="156" r="2" fill="white"/>
+  </g>
+  
+  <!-- Logo Icon Circle -->
+  <g transform="translate(100, 128)">
+    <circle cx="0" cy="0" r="70" fill="white" opacity="0.95" filter="url(#glow)"/>
+    
+    <!-- Haiku character 俳 -->
+    <text x="0" y="15" font-family="Noto Sans CJK JP, Arial" font-size="60" font-weight="bold" 
+          text-anchor="middle" fill="url(#mainGradient)">俳</text>
+  </g>
+  
+  <!-- HAIKU Text -->
+  <text x="256" y="100" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="bold" 
+        text-anchor="middle" fill="white" filter="url(#textShadow)">HAIKU</text>
+  
+  <!-- Tagline -->
+  <text x="256" y="140" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="300" 
+        text-anchor="middle" fill="white" opacity="0.9">Automation Builder</text>
+  
+  <!-- Feature icons -->
+  <g transform="translate(200, 170)" fill="white" opacity="0.8">
+    <!-- AI Brain -->
+    <g transform="translate(0, 0)">
+      <circle cx="0" cy="0" r="2"/>
+      <path d="M -8 0 L -4 0 M 4 0 L 8 0 M 0 -8 L 0 -4 M 0 4 L 0 8" 
+            stroke="white" stroke-width="1" stroke-linecap="round"/>
+    </g>
+    
+    <!-- Home Icon -->
+    <g transform="translate(56, 0)">
+      <path d="M -6 4 L -6 0 L 0 -6 L 6 0 L 6 4 L 2 4 L 2 0 L -2 0 L -2 4 Z" 
+            transform="scale(0.8)"/>
+    </g>
+    
+    <!-- Message Bubble -->
+    <g transform="translate(112, 0)">
+      <rect x="-8" y="-4" width="16" height="10" rx="2"/>
+      <path d="M -2 6 L -2 10 L 2 6"/>
+    </g>
+  </g>
+  
+  <!-- Version badge -->
+  <g transform="translate(420, 40)">
+    <rect x="-30" y="-12" width="60" height="24" rx="12" fill="white" opacity="0.2"/>
+    <text x="0" y="4" font-family="Arial" font-size="14" text-anchor="middle" fill="white">v1.0</text>
+  </g>
+  
+  <!-- Decorative elements -->
+  <circle cx="30" cy="30" r="3" fill="white" opacity="0.3"/>
+  <circle cx="482" cy="30" r="3" fill="white" opacity="0.3"/>
+  <circle cx="30" cy="226" r="3" fill="white" opacity="0.3"/>
+  <circle cx="482" cy="226" r="3" fill="white" opacity="0.3"/>
+</svg>

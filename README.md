@@ -1,6 +1,14 @@
-# HAIKU Automation Builder für Home Assistant
-
-🤖 **HAIKU** erstellt automatisch Home Assistant Automatisierungen aus natürlicher Sprache!
+<div align="center">
+  <img src="logo.svg" alt="HAIKU Logo" width="600"/>
+  
+  # HAIKU Automation Builder für Home Assistant
+  
+  [![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/schurick1502/haiku-automation)
+  [![HACS](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+  [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+  
+  🤖 **Erstelle Home Assistant Automatisierungen mit natürlicher Sprache!**
+</div>
 
 ## ✨ Features
 
