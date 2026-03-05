@@ -1,0 +1,31 @@
+create_automation:
+  name: Automatisierung erstellen
+  description: Erstellt eine neue Automatisierung aus natürlicher Sprache
+  fields:
+    request:
+      name: Anfrage
+      description: Beschreibung der Automatisierung in natürlicher Sprache
+      required: true
+      example: "Wenn die Waschmaschine fertig ist, sende eine Nachricht"
+      selector:
+        text:
+          multiline: true
+
+process_telegram:
+  name: Telegram Nachricht verarbeiten
+  description: Verarbeitet eine Telegram Nachricht und führt entsprechende Aktionen aus
+  fields:
+    message:
+      name: Nachricht
+      description: Die zu verarbeitende Telegram Nachricht
+      required: true
+      example: "Schalte das Wohnzimmer Licht ein"
+      selector:
+        text:
+    chat_id:
+      name: Chat ID
+      description: Telegram Chat ID für die Antwort
+      required: true
+      example: "123456789"
+      selector:
+        text:

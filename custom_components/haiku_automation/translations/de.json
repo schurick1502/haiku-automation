@@ -1,0 +1,36 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "HAIKU Automation einrichten",
+        "description": "Konfiguriere HAIKU für automatische Erstellung von Automatisierungen aus natürlicher Sprache",
+        "data": {
+          "name": "Name",
+          "telegram_token": "Telegram Bot Token (optional)",
+          "telegram_chat_id": "Telegram Chat ID (optional)",
+          "enable_telegram": "Telegram Integration aktivieren"
+        }
+      }
+    },
+    "error": {
+      "unknown": "Unbekannter Fehler"
+    },
+    "abort": {
+      "already_configured": "HAIKU ist bereits konfiguriert"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "HAIKU Optionen",
+        "description": "Passe die HAIKU Einstellungen an",
+        "data": {
+          "enable_telegram": "Telegram Integration aktivieren",
+          "telegram_token": "Telegram Bot Token",
+          "telegram_chat_id": "Telegram Chat ID",
+          "natural_language_model": "Sprachverarbeitungs-Modell"
+        }
+      }
+    }
+  }
+}

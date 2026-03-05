@@ -1,0 +1,13 @@
+{
+  "domain": "haiku_automation",
+  "name": "HAIKU Automation Builder",
+  "codeowners": ["@egrebal"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/egrebal/haiku-automation",
+  "integration_type": "service",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/egrebal/haiku-automation/issues",
+  "requirements": ["pyyaml>=6.0"],
+  "version": "1.0.0"
+}

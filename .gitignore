@@ -1,0 +1,36 @@
+# Home Assistant
+config/.storage/
+config/home-assistant.log
+config/home-assistant_v2.db
+config/.HA_VERSION
+config/secrets.yaml
+config/.cloud/
+
+# HAIKU specific
+*.pyc
+__pycache__/
+.pytest_cache/
+.coverage
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Telegram bot processes
+telegram_bot_*.py
+
+# Temp files
+*.tmp
+/tmp/
+analyze_*.py
+check_*.sh
+pv_status.py
+set_bot_commands.py
+call_service.sh
