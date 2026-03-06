@@ -62,10 +62,11 @@
   "selector": {
     "openai_subscription": {
       "options": {
-        "free": "Free (10 requests/day)",
-        "basic": "Basic (100 requests/day)",
-        "pro": "Pro (1000 requests/day)",
-        "enterprise": "Enterprise (Unlimited)"
+        "free_trial": "OpenAI Free Trial ($18 credit)",
+        "pay_as_you_go": "Pay-as-you-go (Standard)",
+        "tier_1": "Tier 1 ($50+ spent)",
+        "tier_2": "Tier 2 ($500+ spent)",
+        "custom": "Custom (No HAIKU limits)"
       }
     },
     "openai_model": {

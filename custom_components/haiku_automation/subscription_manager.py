@@ -1,4 +1,4 @@
-"""Subscription Manager for HAIKU OpenAI Integration."""
+"""OpenAI API Manager for HAIKU - Free and Open Source."""
 import logging
 from typing import Dict, Any, Optional
 from datetime import datetime, timedelta
@@ -8,44 +8,56 @@ import os
 _LOGGER = logging.getLogger(__name__)
 
 class SubscriptionManager:
-    """Manage OpenAI subscription tiers and usage limits."""
+    """
+    Manage OpenAI API usage and limits.
     
-    TIERS = {
-        "free": {
-            "name": "Free Tier",
-            "daily_limit": 10,
+    NOTE: HAIKU is completely FREE and OPEN SOURCE.
+    The 'subscription' refers only to your OpenAI account type,
+    which determines API rate limits and available models.
+    """
+    
+    # OpenAI's actual tier limits (approximate)
+    # Users should check their OpenAI account for exact limits
+    OPENAI_TIERS = {
+        "free_trial": {
+            "name": "OpenAI Free Trial",
+            "daily_limit": 10,  # Safety limit in HAIKU
             "max_tokens": 2000,
             "models": ["gpt-3.5-turbo"],
-            "features": ["basic_automation"],
-            "price": 0,
-            "description": "Perfect for trying out HAIKU"
+            "description": "OpenAI $18 free credit for new accounts",
+            "note": "Limited to 3 requests per minute"
         },
-        "basic": {
-            "name": "Basic",
-            "daily_limit": 100,
+        "pay_as_you_go": {
+            "name": "OpenAI Pay-as-you-go",
+            "daily_limit": 100,  # Safety limit in HAIKU
             "max_tokens": 4000,
             "models": ["gpt-3.5-turbo", "gpt-4-turbo"],
-            "features": ["basic_automation", "debugging", "suggestions"],
-            "price": 9.99,
-            "description": "For regular home automation users"
+            "description": "Standard OpenAI account with payment method",
+            "note": "You pay for what you use"
         },
-        "pro": {
-            "name": "Professional",
-            "daily_limit": 1000,
+        "tier_1": {
+            "name": "OpenAI Tier 1",
+            "daily_limit": 500,  # Safety limit in HAIKU
             "max_tokens": 8000,
             "models": ["gpt-3.5-turbo", "gpt-4-turbo", "gpt-4"],
-            "features": ["basic_automation", "debugging", "suggestions", "analytics", "learning"],
-            "price": 29.99,
-            "description": "For power users and enthusiasts"
+            "description": "After $50 spent on OpenAI",
+            "note": "Higher rate limits"
         },
-        "enterprise": {
-            "name": "Enterprise",
-            "daily_limit": -1,  # Unlimited
+        "tier_2": {
+            "name": "OpenAI Tier 2",
+            "daily_limit": 1000,  # Safety limit in HAIKU
+            "max_tokens": 16000,
+            "models": ["gpt-3.5-turbo", "gpt-4-turbo", "gpt-4"],
+            "description": "After $500 spent on OpenAI",
+            "note": "Much higher rate limits"
+        },
+        "custom": {
+            "name": "Custom Limits",
+            "daily_limit": -1,  # No limit from HAIKU side
             "max_tokens": 128000,
             "models": ["gpt-3.5-turbo", "gpt-4-turbo", "gpt-4"],
-            "features": ["all"],
-            "price": 99.99,
-            "description": "Unlimited access for professionals"
+            "description": "Set your own limits",
+            "note": "For advanced users who manage their own limits"
         }
     }
     
@@ -93,7 +105,7 @@ class SubscriptionManager:
         Returns:
             Tuple of (allowed, message)
         """
-        tier_info = self.TIERS.get(self.tier, self.TIERS['free'])
+        tier_info = self.OPENAI_TIERS.get(self.tier, self.OPENAI_TIERS['free_trial'])
         
         # Check daily limit
         if tier_info['daily_limit'] != -1:  # -1 means unlimited
@@ -120,7 +132,7 @@ class SubscriptionManager:
     
     def get_remaining_requests(self) -> int:
         """Get remaining requests for today."""
-        tier_info = self.TIERS.get(self.tier, self.TIERS['free'])
+        tier_info = self.OPENAI_TIERS.get(self.tier, self.OPENAI_TIERS['free_trial'])
         
         if tier_info['daily_limit'] == -1:
             return -1  # Unlimited
@@ -129,17 +141,17 @@ class SubscriptionManager:
     
     def can_use_model(self, model: str) -> bool:
         """Check if the current tier can use a specific model."""
-        tier_info = self.TIERS.get(self.tier, self.TIERS['free'])
+        tier_info = self.OPENAI_TIERS.get(self.tier, self.OPENAI_TIERS['free_trial'])
         return model in tier_info['models']
     
     def can_use_feature(self, feature: str) -> bool:
         """Check if the current tier can use a specific feature."""
-        tier_info = self.TIERS.get(self.tier, self.TIERS['free'])
+        tier_info = self.OPENAI_TIERS.get(self.tier, self.OPENAI_TIERS['free_trial'])
         return feature in tier_info['features'] or 'all' in tier_info['features']
     
     def get_max_tokens(self) -> int:
         """Get maximum tokens for current tier."""
-        tier_info = self.TIERS.get(self.tier, self.TIERS['free'])
+        tier_info = self.OPENAI_TIERS.get(self.tier, self.OPENAI_TIERS['free_trial'])
         return tier_info['max_tokens']
     
     def _suggest_upgrade(self) -> str:
@@ -155,7 +167,7 @@ class SubscriptionManager:
     
     def get_usage_stats(self) -> Dict[str, Any]:
         """Get comprehensive usage statistics."""
-        tier_info = self.TIERS.get(self.tier, self.TIERS['free'])
+        tier_info = self.OPENAI_TIERS.get(self.tier, self.OPENAI_TIERS['free_trial'])
         
         return {
             'subscription': {

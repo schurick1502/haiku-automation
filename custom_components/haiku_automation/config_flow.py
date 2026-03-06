@@ -53,7 +53,7 @@ class HAIKUConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             vol.Optional("openai_api_key", default=""): str,
             vol.Optional("enable_openai", default=False): bool,
             vol.Optional("openai_model", default="gpt-3.5-turbo"): vol.In(["gpt-4", "gpt-4-turbo", "gpt-3.5-turbo"]),
-            vol.Optional("openai_subscription", default="free"): vol.In(["free", "basic", "pro", "enterprise"]),
+            vol.Optional("openai_subscription", default="pay_as_you_go"): vol.In(["free_trial", "pay_as_you_go", "tier_1", "tier_2", "custom"]),
         })
 
         return self.async_show_form(
@@ -110,8 +110,8 @@ class HAIKUOptionsFlow(config_entries.OptionsFlow):
                 ): vol.In(["gpt-4", "gpt-4-turbo", "gpt-3.5-turbo"]),
                 vol.Optional(
                     "openai_subscription",
-                    default=self._config_entry.options.get("openai_subscription", "free")
-                ): vol.In(["free", "basic", "pro", "enterprise"]),
+                    default=self._config_entry.options.get("openai_subscription", "pay_as_you_go")
+                ): vol.In(["free_trial", "pay_as_you_go", "tier_1", "tier_2", "custom"]),
                 vol.Optional(
                     "natural_language_model",
                     default=self._config_entry.options.get("natural_language_model", "simple")
