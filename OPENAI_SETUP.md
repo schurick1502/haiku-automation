@@ -5,9 +5,13 @@ HAIKU ist vollständig Open Source und kostenlos. Du zahlst nur für deine OpenA
 
 ## So funktioniert's:
 
-### 1. OpenAI Account erstellen
+### 1. OpenAI Account erstellen oder einloggen
 1. Gehe zu [platform.openai.com](https://platform.openai.com)
-2. Erstelle einen Account (kostenlos)
+2. Wähle deine bevorzugte Methode:
+   - **E-Mail & Passwort**: Klassische Registrierung
+   - **Google Account**: Mit Google einloggen
+   - **Microsoft Account**: Mit Microsoft einloggen
+   - **Apple ID**: Mit Apple einloggen
 3. Neue Accounts erhalten $18 Gratis-Guthaben!
 
 ### 2. API-Key generieren
