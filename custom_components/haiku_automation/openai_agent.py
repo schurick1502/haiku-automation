@@ -60,17 +60,15 @@ class OpenAIAgent:
         # Store API key securely
         self.vault.store_api_key("openai", api_key)
         
+        # Initialize subscription manager
+        from .subscription_manager import SubscriptionManager
+        self.subscription_manager = SubscriptionManager(hass, subscription_tier)
+        
         self.usage_stats = {
             "total_tokens": 0,
             "total_cost": 0.0,
             "requests_today": 0,
             "last_reset": datetime.now().date()
-        }
-        self.rate_limits = {
-            "free": {"daily_requests": 10, "max_tokens": 2000},
-            "basic": {"daily_requests": 100, "max_tokens": 4000},
-            "pro": {"daily_requests": 1000, "max_tokens": 8000},
-            "enterprise": {"daily_requests": -1, "max_tokens": 128000}  # -1 = unlimited
         }
         
     async def initialize(self):
@@ -85,18 +83,11 @@ class OpenAIAgent:
     
     def check_rate_limit(self) -> bool:
         """Check if request is within rate limits."""
-        # Reset daily counter
-        today = datetime.now().date()
-        if self.usage_stats["last_reset"] != today:
-            self.usage_stats["requests_today"] = 0
-            self.usage_stats["last_reset"] = today
-        
-        limits = self.rate_limits.get(self.subscription_tier, self.rate_limits["free"])
-        
-        if limits["daily_requests"] == -1:  # Unlimited
-            return True
-            
-        return self.usage_stats["requests_today"] < limits["daily_requests"]
+        # Use subscription manager for rate limiting
+        allowed, message = self.subscription_manager.check_limit()
+        if not allowed:
+            _LOGGER.warning(f"Rate limit check: {message}")
+        return allowed
     
     async def process_request(self, request: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
         """

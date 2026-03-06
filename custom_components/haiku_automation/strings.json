@@ -1,0 +1,123 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "HAIKU Automation Builder Setup",
+        "description": "Configure HAIKU - Your intelligent automation assistant",
+        "data": {
+          "name": "Integration Name",
+          "enable_telegram": "Enable Telegram Bot",
+          "telegram_token": "Telegram Bot Token",
+          "telegram_chat_id": "Telegram Chat ID",
+          "enable_claude": "Enable Claude AI",
+          "claude_api_key": "Claude API Key",
+          "enable_openai": "Enable OpenAI GPT",
+          "openai_api_key": "OpenAI API Key",
+          "openai_model": "GPT Model",
+          "openai_subscription": "OpenAI Subscription Tier"
+        },
+        "data_description": {
+          "name": "Name for this HAIKU instance",
+          "telegram_token": "Get from @BotFather on Telegram",
+          "telegram_chat_id": "Your Telegram chat ID",
+          "claude_api_key": "Your Anthropic API key",
+          "openai_api_key": "Your OpenAI API key (sk-...)",
+          "openai_model": "Choose based on your needs and budget",
+          "openai_subscription": "Select your subscription tier for proper rate limiting"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid authentication",
+      "cannot_connect": "Failed to connect",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "already_configured": "HAIKU is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "HAIKU Options",
+        "description": "Manage your HAIKU configuration",
+        "data": {
+          "enable_telegram": "Enable Telegram Bot",
+          "telegram_token": "Telegram Bot Token",
+          "telegram_chat_id": "Telegram Chat ID",
+          "enable_openai": "Enable OpenAI GPT",
+          "openai_api_key": "OpenAI API Key",
+          "openai_model": "GPT Model",
+          "openai_subscription": "Subscription Tier",
+          "natural_language_model": "NLP Model"
+        },
+        "data_description": {
+          "openai_subscription": "Free: 10 req/day | Basic: 100 req/day | Pro: 1000 req/day | Enterprise: Unlimited",
+          "openai_model": "GPT-4: Most capable | GPT-4 Turbo: Faster | GPT-3.5: Cost-effective",
+          "natural_language_model": "Choose AI backend for automation creation"
+        }
+      }
+    }
+  },
+  "selector": {
+    "openai_subscription": {
+      "options": {
+        "free": "Free (10 requests/day)",
+        "basic": "Basic (100 requests/day)",
+        "pro": "Pro (1000 requests/day)",
+        "enterprise": "Enterprise (Unlimited)"
+      }
+    },
+    "openai_model": {
+      "options": {
+        "gpt-4": "GPT-4 (Most capable, $0.03/1K tokens)",
+        "gpt-4-turbo": "GPT-4 Turbo (Fast, large context, $0.01/1K tokens)",
+        "gpt-3.5-turbo": "GPT-3.5 Turbo (Cost-effective, $0.0015/1K tokens)"
+      }
+    }
+  },
+  "service": {
+    "create_automation": {
+      "name": "Create Automation",
+      "description": "Create an automation from natural language",
+      "fields": {
+        "request": {
+          "name": "Request",
+          "description": "Natural language description of the automation"
+        }
+      }
+    },
+    "debug_automation": {
+      "name": "Debug Automation",
+      "description": "Debug why an automation isn't working",
+      "fields": {
+        "automation_id": {
+          "name": "Automation ID",
+          "description": "The automation to debug"
+        },
+        "issue": {
+          "name": "Issue Description",
+          "description": "Optional description of the problem"
+        }
+      }
+    },
+    "suggest_automations": {
+      "name": "Suggest Automations",
+      "description": "Get automation suggestions based on your usage patterns"
+    },
+    "analytics_report": {
+      "name": "Analytics Report",
+      "description": "Generate analytics report for your automations",
+      "fields": {
+        "period": {
+          "name": "Period",
+          "description": "Report period (day, week, month)"
+        }
+      }
+    },
+    "discover_integrations": {
+      "name": "Discover Integrations",
+      "description": "Discover available smart home integrations"
+    }
+  }
+}

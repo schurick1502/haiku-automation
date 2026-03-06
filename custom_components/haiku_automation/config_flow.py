@@ -17,15 +17,30 @@ class HAIKUConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         if user_input is not None:
-            # Check if already configured
-            await self.async_set_unique_id("haiku_automation_instance")
-            self._abort_if_unique_id_configured()
+            # Validate OpenAI API key if provided
+            if user_input.get("openai_api_key") and user_input.get("enable_openai"):
+                from .subscription_manager import SubscriptionManager
+                manager = SubscriptionManager(self.hass, user_input.get("openai_subscription", "free"))
+                
+                if not manager.validate_api_key(user_input["openai_api_key"]):
+                    errors["openai_api_key"] = "invalid_api_key"
+                else:
+                    # Test connection
+                    success, message = await manager.test_connection(user_input["openai_api_key"])
+                    if not success:
+                        errors["openai_api_key"] = "cannot_connect"
+                        _LOGGER.error(f"OpenAI connection test failed: {message}")
             
-            # Create entry
-            return self.async_create_entry(
-                title=user_input.get(CONF_NAME, DEFAULT_NAME),
-                data=user_input
-            )
+            if not errors:
+                # Check if already configured
+                await self.async_set_unique_id("haiku_automation_instance")
+                self._abort_if_unique_id_configured()
+                
+                # Create entry
+                return self.async_create_entry(
+                    title=user_input.get(CONF_NAME, DEFAULT_NAME),
+                    data=user_input
+                )
 
         # Show form
         data_schema = vol.Schema({
